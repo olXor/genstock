@@ -66,7 +66,6 @@ void readCfg() {
             datapath = value.c_str();
         else if(variable == "absdatapath")
             absdatapath = value.c_str();
-        std::cout << "variable: " << variable << "value: " << value << std::endl;
     }
 }
 
@@ -243,7 +242,7 @@ bool loadCurrentGenbots(Genbot** genbots) {
             std::ostringstream genomefname;
             genomefname << savestring << id << "/genome";
 
-            Genome* genome = new Genome();
+            Genome* genome = new Genome(defaultConvProp);
             genome->loadGenome(genomefname.str().c_str());
             genbots[i] = new Genbot(genome, NUMINPUTS, NUMOUTPUTS, id);
 
@@ -256,7 +255,7 @@ bool loadCurrentGenbots(Genbot** genbots) {
     else {
         //create the first set of bots
         for(int i=0; i<NUMGENBOTS; i++) {
-            Genome* genome = new Genome();
+            Genome* genome = new Genome(defaultConvProp);
             genome->createRandomGenome();
             genbots[i] = new Genbot(genome, NUMINPUTS, NUMOUTPUTS, findNextID(1));
 
