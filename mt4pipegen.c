@@ -126,6 +126,7 @@ std::string MT4PipeGen::getCollectiveOutput(Genbot** genbots, double** outputs, 
         }
         return outputString.str();
     }
+    return " ";
 }
 
 void *makeTrainThread(void* pipegen) {

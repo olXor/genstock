@@ -7,7 +7,7 @@
 #include <sys/stat.h>
 #include <math.h>
 #include </usr/include/fenv.h>
-#pragma STDC FENV_ACCESS ON
+//#pragma STDC FENV_ACCESS ON
 #include <pthread.h>
 
 #include <float.h>
@@ -54,7 +54,7 @@ void readCfg() {
     while(std::getline(pathfile, line)) {
         std::string variable;
         std::string value;
-        int del;
+        size_t del;
         if((del = line.find("="))==std::string::npos)
             throw std::runtime_error("invalid path.cfg");
         variable = line.substr(0, del);
@@ -321,9 +321,11 @@ bool loadCurrentGenbots(Genbot** genbots) {
             genbots[i]->progressTurnsSaved();
         }
     }
+    return true;
 }
 
 void *startKeyboardCheck(void *threadarg) {
+    (void)threadarg;
     stopAfterNextMT4Run = false;
     stopAfterNextTestSet = false;
     statusLog->addEvent("Running.", statuswin);
