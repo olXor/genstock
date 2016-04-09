@@ -1,0 +1,11 @@
+*.swp
+*.swo
+*.exe
+*.stackdump
+*.dll
+backupsavegenbots/
+resultplot/
+savegenbot/
+topbots/
+goodbots/
+loggenstock
