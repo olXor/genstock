@@ -1,5 +1,5 @@
-#include "genbot.h"
-#include "genome.h"
+#include "genbot/genbot.h"
+#include "genbot/genome.h"
 #include "mt4pipegen.h"
 #include <iostream>
 #include <string>
