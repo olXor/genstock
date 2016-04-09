@@ -80,6 +80,28 @@ int roundNum = 0;
 int currentTrainRun = 0;
 int currentTestRun = 0;
 
+void readCfg() {
+    std::ifstream pathfile("path.cfg");
+    std::string line;
+    while(std::getline(pathfile, line)) {
+        std::string variable;
+        std::string value;
+        int del;
+        if((del = line.find("="))==std::string::npos)
+            throw std::runtime_error("invalid path.cfg");
+        variable = line.substr(0, del);
+        value = line.substr(del+1, std::string::npos);
+        if(!value.empty() && value.front()=='\"' && value.back()=='\"')
+            value = value.substr(1,value.length()-2);
+
+        if(variable == "datapath")
+            datapath = value.c_str();
+        else if(variable == "absdatapath")
+            absdatapath = value.c_str();
+        std::cout << "variable: " << variable << "value: " << value << std::endl;
+    }
+}
+
 void deleteResults(std::string name) {
     std::ostringstream fname;
     fname << absdatapath << name << ".htm";
@@ -373,8 +395,6 @@ void combineParentInitialConditions(Genbot* child, Genbot* parent1, Genbot* pare
 
 int main() {
     feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW);
-    datapath = "/cygdrive/c/Users/Thomas/AppData/Roaming/MetaQuotes/Terminal/50CA3DFB510CC5A8F28B48D1BF2A5702/genstockReports/";
-    absdatapath = "C:/Users/Thomas/AppData/Roaming/MetaQuotes/Terminal/50CA3DFB510CC5A8F28B48D1BF2A5702/genstockReports/";
     srand(time(NULL));
 
     //ncurses stuff
@@ -392,6 +412,8 @@ int main() {
     mainwin = newwin(50, 80, 2, 0);
     networkwin = newwin(50, 80, 2, 80);
     errorwin = newwin(10, 160, 52, 0);
+
+    readCfg();
 
     MT4PipeGen* mt4pipe = new MT4PipeGen(NUMINPUTS, NUMOUTPUTS, NUMGENBOTS, NUMSTATICTOPBOTS, NUM_TRAIN_THREADS);
 

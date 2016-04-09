@@ -3,6 +3,7 @@
 *.exe
 *.stackdump
 *.dll
+*.cfg
 backupsavegenbots/
 resultplot/
 savegenbot/

@@ -1,9 +1,6 @@
 #!/bin/bash
 
-termpath="/cygdrive/c/Program\ Files\ \(x86\)/MetaTrader\ 4/terminal.exe"
-abstermpath="C:/Program Files (x86)/MetaTrader 4/terminal.exe"
-datapath="/cygdrive/c/Users/Thomas/AppData/Roaming/MetaQuotes/Terminal/50CA3DFB510CC5A8F28B48D1BF2A5702"
-absdatapath="C:/Users/Thomas/AppData/Roaming/MetaQuotes/Terminal/50CA3DFB510CC5A8F28B48D1BF2A5702"
+source path.cfg
 OPTIND=1
 testSample=0
 rYear=5
