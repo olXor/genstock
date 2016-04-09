@@ -67,6 +67,49 @@ void readCfg() {
         else if(variable == "absdatapath")
             absdatapath = value.c_str();
     }
+
+    std::ifstream simfile("sim.cfg");
+    while(std::getline(simfile, line)) {
+        std::string variable;
+        std::string value;
+        std::stringstream ss(line);
+        if(!(ss >> variable >> value))
+            throw std::runtime_error("invalid sim.cfg");
+
+        if(variable == "BARSBACK") {
+            std::istringstream(value) >> BARSBACK;
+        }
+        else if(variable == "TRADECANDLELIMIT")
+            std::istringstream(value) >> TRADECANDLELIMIT;
+        else if(variable == "NUMGENBOTS")
+            std::istringstream(value) >> NUMGENBOTS;
+        else if(variable == "NUMWINBOTS")
+            std::istringstream(value) >> NUMWINBOTS;
+        else if(variable == "NUMSTATICTOPBOTS")
+            std::istringstream(value) >> NUMSTATICTOPBOTS;
+        else if(variable == "NUMPARENTBOTS")
+            std::istringstream(value) >> NUMPARENTBOTS;
+        else if(variable == "NUMTRAINCYCLES")
+            std::istringstream(value) >> NUMTRAINCYCLES;
+        else if(variable == "CHILD_INHERITS_PARENT_LEARNING")
+            std::istringstream(value) >> CHILD_INHERITS_PARENT_LEARNING;
+        else if(variable == "LEARNDIVISOR")
+            std::istringstream(value) >> LEARNDIVISOR;
+        else if(variable == "CHECK_TEST")
+            std::istringstream(value) >> CHECK_TEST;
+        else if(variable == "CHECK_TRAIN")
+            std::istringstream(value) >> CHECK_TRAIN;
+        else if(variable == "USE_TRAILING_STOP")
+            std::istringstream(value) >> USE_TRAILING_STOP;
+        else if(variable == "TEST1_TIMEPERIOD")
+            std::istringstream(value) >> TEST1_TIMEPERIOD;
+        else if(variable == "TRAIN_TIMEPERIOD")
+            std::istringstream(value) >> TRAIN_TIMEPERIOD;
+        else if(variable == "TEST2_TESTSAMPLE")
+            std::istringstream(value) >> TEST2_TESTSAMPLE;
+        else if(variable == "NUM_TRAIN_THREADS")
+            std::istringstream(value) >> NUM_TRAIN_THREADS;
+    }
 }
 
 void deleteResults(std::string name) {
