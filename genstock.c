@@ -33,38 +33,6 @@ EventLog* statusLog = new EventLog();
 const char* datapath;
 const char* absdatapath;
 
-//---simulation parameters
-#define BARSBACK 100
-#define TRADECANDLELIMIT 15
-#define TESTPERIOD "M5"
-
-#define NUMGENBOTS 50
-#define NUMWINBOTS 30
-#define NUMSTATICTOPBOTS 15
-#define NUMPARENTBOTS 15
-#define NUMTRAINCYCLES 100
-#define CHILD_INHERITS_PARENT_LEARNING 1
-
-#define NUMOUTPUTS 2
-#define LEARNDIVISOR 500
-#define NUMINPUTS (4*BARSBACK+1)
-
-#define SKIP_TRAIN_ON_ROUND_1 0
-#define SKIP_TEST_ON_ROUND_1 0
-
-#define CHECK_TEST 0
-#define CHECK_TRAIN 1
-
-#define USE_TRAILING_STOP 1
-
-#define TEST1_TIMEPERIOD 6
-#define TRAIN_TIMEPERIOD 6
-
-#define TEST2_TESTSAMPLE 0
-#define TEST2_TIMEPERIOD 1
-
-#define NUM_TRAIN_THREADS 4
-//--------------------------
 
 const char* savestring = "savegenbot/";
 

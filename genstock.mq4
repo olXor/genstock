@@ -13,7 +13,7 @@ input int tradeCandleLimit;
 input bool useTrailingStop;
 input string savefile;
 
-#define numInputs (4*barsBack+1)
+#define numInputs (barsBack+2)
 //#define period PERIOD_M15
 
 string symbol = Symbol();
@@ -350,17 +350,20 @@ void OnTick() {
     else
         inputs[1] = 1;
 
+    /*
     if(maxVolumeSemiLocal > 0)
         inputs[2] = ((double)maxVolumeLocal)/maxVolumeSemiLocal;
     else
         inputs[2] = 1;
+    */
 
-    for(int i=3; i<barsBack+3; i++) {
+    for(int i=2; i<barsBack+2; i++) {
         if(maxPriceLocal == minPriceLocal)
-            inputs[i] = 0.5;
+            inputs[i] = 0;
         else
-            inputs[i] = (rawPriceAverages[i-3]-minPriceLocal)/(maxPriceLocal-minPriceLocal);
+            inputs[i] = 2*(rawPriceAverages[i-2]-minPriceLocal)/(maxPriceLocal-minPriceLocal)-1;
     }
+    /*
     for(int i=barsBack+3; i<2*barsBack+3; i++) {
         if(maxVolumeLocal == minVolumeLocal)
             inputs[i] = 0.5;
@@ -383,6 +386,7 @@ void OnTick() {
         else
             inputs[i] = 0;
     }
+    */
     
     /* ---- done setting up inputs ---- */
 
