@@ -3,9 +3,9 @@
 
 #include <windows.h>
 #include <iostream>
-#include "genbot.h"
+#include "genbot/genbot.h"
 #include <string>
-#include "genome.h"
+#include "genbot/genome.h"
 #include <unistd.h>
 #include <pthread.h>
 #include <queue>
