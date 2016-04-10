@@ -30,8 +30,8 @@ EventLog* networkLog = new EventLog();
 EventLog* errorLog = new EventLog();
 EventLog* statusLog = new EventLog();
 
-const char* datapath;
-const char* absdatapath;
+std::string datapath;
+std::string absdatapath;
 
 
 const char* savestring = "savegenbot/";
@@ -62,10 +62,10 @@ void readCfg() {
         if(!value.empty() && value.front()=='\"' && value.back()=='\"')
             value = value.substr(1,value.length()-2);
 
-        if(variable == "datapath")
-            datapath = value.c_str();
-        else if(variable == "absdatapath")
-            absdatapath = value.c_str();
+	if(variable == "datapath")
+		datapath = value;
+	else if(variable == "absdatapath")
+		absdatapath = value;
     }
 
     std::ifstream simfile("sim.cfg");
@@ -114,22 +114,22 @@ void readCfg() {
 
 void deleteResults(std::string name) {
     std::ostringstream fname;
-    fname << absdatapath << name << ".htm";
+    fname << absdatapath << "/genstockReports/" << name << ".htm";
     remove(fname.str().c_str());
     fname.clear();
     fname.str("");
-    fname << absdatapath << name << ".gif";
+    fname << absdatapath << "/genstockReports/" << name << ".gif";
     remove(fname.str().c_str());
 }
 
 double checkResultsOld(int id, int resultType) {
     std::ostringstream fname;
     if(resultType == RESULT_TYPE_TEST)
-        fname << absdatapath << id << "t.htm";
+        fname << absdatapath << "/genstockReports/" << id << "t.htm";
     else if(resultType == RESULT_TYPE_TRAIN)
-        fname << absdatapath << id << "r.htm";
+        fname << absdatapath << "/genstockReports/" << id << "r.htm";
     else if(resultType == RESULT_TYPE_SECONDARY_TEST)
-        fname << absdatapath << id << "t2.htm";
+        fname << absdatapath << "/genstockReports/" << id << "t2.htm";
     else
         return -999999.;
 
@@ -159,7 +159,7 @@ double checkResultsOld(int id, int resultType) {
 
 double checkResults(int id, int resultType) {
     std::ostringstream fname;
-    fname << absdatapath << "../tester/files/genstockReports/testResults/";
+    fname << absdatapath << "/tester/files/genstockReports/testResults/";
     if(resultType == RESULT_TYPE_TEST) {
         fname << "t-" << id;
     }
@@ -421,9 +421,9 @@ int main() {
     refresh();
 
     statuswin = newwin(2, 160, 0, 0);
-    mainwin = newwin(50, 80, 2, 0);
-    networkwin = newwin(50, 80, 2, 80);
-    errorwin = newwin(10, 160, 52, 0);
+    mainwin = newwin(30, 80, 2, 0);
+    networkwin = newwin(30, 80, 2, 80);
+    errorwin = newwin(10, 160, 32, 0);
 
     readCfg();
 

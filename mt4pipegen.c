@@ -32,21 +32,32 @@ bool MT4PipeGen::readString(HANDLE pipe, char* buffer, int size) {
 }
 
 void MT4PipeGen::teachGenbot(Genbot* genbot, double pp, bool longTrade, double* outputs) {
+    (void)outputs;
     if(pp == 0)
         return;
 
+    double correctoutput[2];
     if(longTrade) {
-        if(outputs[0] > 0.5)
-            genbot->learn(pp);
-        else
-            genbot->learn(-pp);
+        if(pp > 0) {
+            correctoutput[0] = 1;
+            correctoutput[1] = -1;
+        }
+        else {
+            correctoutput[0] = -1;
+            correctoutput[1] = 1;
+        }
     }
-    else if(!longTrade) {
-        if(outputs[1] > 0.5)
-            genbot->learn(pp);
-        else
-            genbot->learn(-pp);
+    else {
+        if(pp > 0) {
+            correctoutput[0] = -1;
+            correctoutput[1] = 1;
+        }
+        else {
+            correctoutput[0] = 1;
+            correctoutput[1] = -1;
+        }
     }
+    genbot->learnRawOutput(correctoutput, fabs(pp), 2);
 }
 
 void MT4PipeGen::perturbGenbot(Genbot* genbot, double pp, bool longTrade, double* inputs) {

@@ -451,10 +451,10 @@ void OnTick() {
         getOutputs(outputids, longoutput, shortoutput);
         for(int i=0; i<ArraySize(outputids); i++) {
             //Print("outputid: ", outputids[i], " long: ", longoutput[i], " short: ", shortoutput[i]);
-            if(longoutput[i] > 0.5 && shortoutput[i] < 0.5) {
+            if(longoutput[i] > 0 && shortoutput[i] < 0) {
                 makeTrade(OP_BUY, outputids[i]);
             }
-            else if(longoutput[i] < 0.5 && shortoutput[i] > 0.5) {
+            else if(longoutput[i] < 0 && shortoutput[i] > 0) {
                 makeTrade(OP_SELL, outputids[i]);
             }
         }
