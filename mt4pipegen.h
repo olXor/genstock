@@ -18,13 +18,13 @@ struct TrainThreadInputs {
     Genbot* genbot;
     double pp;
     bool longTrade;
-    double* outputs;
-    double* inputs;
+    std::vector<double> inputs;
 };
 
 struct RunThreadInputs {
     Genbot* genbot;
     int turnsToProgress;
+    std::vector<double> inputs;
     double* outputs;
     int numOutputs;
 };
@@ -62,8 +62,8 @@ class MT4PipeGen {
         bool readString(HANDLE pipe, char* buffer, int size);
         bool runMT4Cycle(HANDLE pipe, Genbot** genbots, int botnum, bool train, int outputType, int agreeThreshold, int botsPolled);
         std::string getCollectiveOutput(Genbot** genbots, double** outputs, int outputType, int botnum, int agreeThreshold, int botsPolled);
-        void teachGenbot(Genbot* genbot, double pp, bool longTrade, double* outputs);
-        void perturbGenbot(Genbot* genbot, double pp, bool longTrade, double* inputs);
+        void teachGenbot(Genbot* genbot, double pp, bool longTrade);
+        void perturbGenbot(Genbot* genbot, double pp, bool longTrade, std::vector<double> inputs);
 
     public:
         void runSim(Genbot** genbot, int botnum, int barsBack, int tradeCandleLimit, int learnDivisor, bool train, int testSample, int timePeriod, std::string testPeriod, bool useTrailingStop, bool useTilt, const char* savename, int outputType = SINGLE_BOT, int agreeThreshold = 0, int botsPolled = 0);

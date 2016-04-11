@@ -31,8 +31,7 @@ bool MT4PipeGen::readString(HANDLE pipe, char* buffer, int size) {
     return ReadFile(pipe, buffer, size*sizeof(char), &numBytesWritten, NULL);
 }
 
-void MT4PipeGen::teachGenbot(Genbot* genbot, double pp, bool longTrade, double* outputs) {
-    (void)outputs;
+void MT4PipeGen::teachGenbot(Genbot* genbot, double pp, bool longTrade) {
     if(pp == 0)
         return;
 
@@ -60,11 +59,10 @@ void MT4PipeGen::teachGenbot(Genbot* genbot, double pp, bool longTrade, double* 
     genbot->learnRawOutput(correctoutput, fabs(pp), 2);
 }
 
-void MT4PipeGen::perturbGenbot(Genbot* genbot, double pp, bool longTrade, double* inputs) {
+void MT4PipeGen::perturbGenbot(Genbot* genbot, double pp, bool longTrade, std::vector<double> inputs) {
     if(pp == 0)
         return;
 
-    double outputs[NUMOUTPUTS];
     double perturbedInputs[NUMINPUTS];
 
     for(int i=0; i<genbot->getNumPerturbRuns(); i++) {
@@ -83,9 +81,8 @@ void MT4PipeGen::perturbGenbot(Genbot* genbot, double pp, bool longTrade, double
 
         genbot->setInputs(perturbedInputs, NUMINPUTS);
         genbot->progressTurns(genbot->getMinDepth() + extraTurns, false);
-        genbot->getOutputs(outputs, NUMOUTPUTS);
 
-        teachGenbot(genbot, genbot->getPerturbFactor()*pp, longTrade, outputs);
+        teachGenbot(genbot, genbot->getPerturbFactor()*pp, longTrade);
     }
 }
 
@@ -112,9 +109,9 @@ std::string MT4PipeGen::getCollectiveOutput(Genbot** genbots, double** outputs, 
         if(botsPolled <= 0)
             throw std::runtime_error("Trying to get consensus with no bots polled");
         for(int i=0; i<botsPolled && i<numGenbots; i++) {
-            if(outputs[i][0] > 0.5 && outputs[i][1] < 0.5)
+            if(outputs[i][0] > 0 && outputs[i][1] < 0)
                 numLong++;
-            else if(outputs[i][0] < 0.5 && outputs[i][1] > 0.5)
+            else if(outputs[i][0] < 0 && outputs[i][1] > 0)
                 numShort++;
         }
         if(numLong - numShort >= agreeThreshold)
@@ -159,7 +156,7 @@ void MT4PipeGen::trainGenbotThread() {
         pthread_mutex_unlock(&trainMutex);
         pthread_mutex_unlock(&trainProcessingMutex);
 
-        teachGenbot(inputs.genbot, inputs.pp, inputs.longTrade, inputs.outputs);
+        teachGenbot(inputs.genbot, inputs.pp, inputs.longTrade);
         perturbGenbot(inputs.genbot, inputs.pp, inputs.longTrade, inputs.inputs);
 
         pthread_mutex_lock(&trainProcessingMutex);
@@ -188,6 +185,7 @@ void MT4PipeGen::runGenbotThread() {
         pthread_mutex_unlock(&runMutex);
         pthread_mutex_unlock(&runProcessingMutex);
 
+        inputs.genbot->setInputs(&(inputs.inputs[0]), NUMINPUTS);
         inputs.genbot->progressTurns(inputs.turnsToProgress, false);
         inputs.genbot->getOutputs(inputs.outputs, inputs.numOutputs);
 
@@ -203,7 +201,7 @@ bool MT4PipeGen::runMT4Cycle(HANDLE pipe, Genbot** genbots, int botnum, bool tra
     char buffer[size];
     if(!readString(pipe, buffer, size)) return false;
     char* pch;
-    double inputs[NUMINPUTS];
+    std::vector<double> inputs(NUMINPUTS,0);
     pch = strtok(buffer, " ");
     for(int i=0; i<NUMINPUTS && pch != NULL; i++) {
         inputs[i] = strtod(pch, NULL);
@@ -218,7 +216,6 @@ bool MT4PipeGen::runMT4Cycle(HANDLE pipe, Genbot** genbots, int botnum, bool tra
     for(int i=0; i<numGenbots; i++) {
         if(botnum >= 0 && botnum < numGenbots && i != botnum) continue;
         if(train && i<numStaticTopBots) continue;
-        genbots[i]->setInputs(inputs, NUMINPUTS);
         //ignore the extraAnswerTurns if the network is not recursive
         int extraTurns;
         if(genbots[i]->hasSideWeights())
@@ -229,6 +226,7 @@ bool MT4PipeGen::runMT4Cycle(HANDLE pipe, Genbot** genbots, int botnum, bool tra
         RunThreadInputs runInputs;
         runInputs.genbot = genbots[i];
         runInputs.turnsToProgress = genbots[i]->getMinDepth() + extraTurns;
+        runInputs.inputs = inputs;
         runInputs.outputs = outputs[i];
         runInputs.numOutputs = NUMOUTPUTS;
 
@@ -271,7 +269,6 @@ bool MT4PipeGen::runMT4Cycle(HANDLE pipe, Genbot** genbots, int botnum, bool tra
             trainInputs.genbot = genbots[i];
             trainInputs.pp = pp;
             trainInputs.longTrade = longTrade;
-            trainInputs.outputs = outputs[i];
             trainInputs.inputs = inputs;
 
             pthread_mutex_lock(&trainMutex);
